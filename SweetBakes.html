@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>val Bakes — Bakery Landing & Cart</title>
+  <style>
+    :root {
+      --accent: #ff6b6b;
+      --accent-dark: #e04f4f;
+      --bg: #fff6f3;
+      --card: #ffffff;
+      --muted: #666;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: #222
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 28px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3));
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(6px);
+      z-index: 50
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), #ffd5d5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: white;
+    }
+
+    nav a {
+      margin-left: 18px;
+      text-decoration: none;
+      color: #222;
+      font-weight: 600;
+    }
+
+    .hero {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      padding: 60px 28px;
+    }
+
+    .hero-left {
+      flex: 1;
+    }
+
+    .hero-right {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero h1 {
+      font-size: 40px;
+      margin: 0 0 12px;
+    }
+
+    .lead {
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .cta {
+      background: var(--accent);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(255, 107, 107, 0.18);
+    }
+
+    .shop {
+      padding: 28px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(18, 18, 18, 0.06);
+      transition: transform .18s;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-body {
+      padding: 14px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .price {
+      font-weight: 800;
+      color: var(--accent-dark);
+    }
+
+    .add {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+      color: white;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    footer {
+      padding: 40px 28px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .cart-btn {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: var(--accent);
+      color: white;
+      padding: 14px 16px;
+      border-radius: 999px;
+      border: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      z-index: 60;
+    }
+
+    .drawer {
+      position: fixed;
+      right: 0;
+      top: 0;
+      height: 100vh;
+      width: 380px;
+      background: white;
+      box-shadow: -20px 0 60px rgba(0, 0, 0, 0.12);
+      transform: translateX(110%);
+      transition: transform .28s;
+      padding: 20px;
+      z-index: 70;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer h3 {
+      margin: 0 0 12px;
+    }
+
+    .cart-list {
+      flex: 1;
+      overflow: auto;
+      margin-bottom: 12px;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px dashed #eee;
+    }
+
+    .cart-item img {
+      width: 56px;
+      height: 56px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .qty {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .small-btn {
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: #fafafa;
+      cursor: pointer;
+    }
+
+    .checkout {
+      padding: 12px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 80;
+    }
+
+    .modal {
+      background: white;
+      padding: 22px;
+      border-radius: 12px;
+      max-width: 420px;
+      width: 90%;
+    }
+
+    @media(max-width:740px) {
+      .hero {
+        flex-direction: column;
+        padding: 30px 18px;
+      }
+
+      .hero h1 {
+        font-size: 28px;
+      }
+
+      .drawer {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="logo">VB</div>
+      <div>
+        <div style="font-weight:800">Val Bakes</div>
+        <div style="font-size:12px;color:var(--muted)">Fresh daily • Baked with love</div>
+      </div>
+    </div>
+    <nav>
+      <a href="#shop">Menu</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="hero-left">
+      <h1>Delicious cakes & pastries, delivered fresh</h1>
+      <p class="lead">Custom cakes • Quick delivery • Catering for events. Order online or visit our shop.</p>
+      <div style="display:flex;gap:12px;align-items:center">
+        <button class="cta" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">Order
+          Now</button>
+        <button class="cta" style="background:#fff;color:var(--accent);border:2px solid var(--accent)"
+          onclick="openWhatsApp()">WhatsApp</button>
+      </div>
+    </div>
+    <div class="hero-right">
+      <img src="bakery.jpeg"
+        alt="bakery" style="width:360px;border-radius:18px;box-shadow:0 14px 40px rgba(0,0,0,0.2)">
+    </div>
+  </section>
+
+  <section id="shop" class="shop">
+    <h2 style="text-align:center;margin-bottom:18px">Menu Highlights</h2>
+    <div class="grid" id="productGrid">
+
+    </div>
+  </section>
+
+  <section id="about" style="padding:36px 28px">
+    <h2 style="text-align:center;margin-bottom:12px">About Val Bakes</h2>
+    <p style="max-width:820px;margin:0 auto;color:var(--muted);text-align:center">We are a family-run bakery making
+      artisan cakes and pastries using locally sourced ingredients. From birthdays to weddings, we craft treats that
+      people remember.</p>
+  </section>
+
+  <section id="contact" style="padding:36px 28px">
+    <h2 style="text-align:center;margin-bottom:12px">Contact & Visit</h2>
+    <p style="text-align:center;color:var(--muted);">123 Baker Street, YourCity • Mon–Sun: 8am – 8pm • Phone: +91 98765
+      XXXXX</p>
+  </section>
+
+  <button class="cart-btn" id="cartToggle">Cart (0)</button>
+
+  <div class="drawer" id="cartDrawer" aria-hidden="true">
+    <h3>Your Order</h3>
+    <div class="cart-list" id="cartList">
+      <div style="color:var(--muted)">No items yet — add something yummy!</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px">
+      <div style="flex:1;color:var(--muted)">Total:</div>
+      <div id="cartTotal" style="font-weight:800">₹0</div>
+    </div>
+    <button class="checkout" id="checkoutBtn">Checkout</button>
+    <div style="height:10px"></div>
+    <button class="small-btn" onclick="closeCart()">Continue shopping</button>
+  </div>
+
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <h3>Checkout (Demo)</h3>
+      <p style="color:var(--muted)">This is a demo. In a real project you'd connect to a payment gateway or send order
+        details to the owner.</p>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <input id="custName" placeholder="Your name" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:6px">
+      </div>
+      <div style="margin-top:12px"><input id="custPhone" placeholder="Phone / WhatsApp"
+          style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px"></div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button style="flex:1;padding:10px;border-radius:8px;border:none;background:var(--accent);color:white"
+          id="placeOrder">Place Order</button>
+        <button style="flex:1;padding:10px;border-radius:8px;border:1px solid #ddd;background:white"
+          onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © <span id="year"></span> Val Bakes • Built by Valmiki.
+  </footer>
+
+  <script>
+
+    const products = [
+      { id: 1, name: 'Classic Chocolate Cake', price: 499, img: "chocolatecake.jpeg" },
+      { id: 2, name: 'Strawberry Cheesecake', price: 549, img: 'strawberry.jpeg' },
+      { id: 3, name: 'Blueberry Tart', price: 199, img: 'blueberry.jpeg' },
+      { id: 4, name: 'Croissant (Pack of 3)', price: 149, img: 'croissant.jpeg' },
+      { id: 5, name: 'Custom Celebration Cake', price: 1299, img: 'customcake.jpeg' },
+      { id: 6, name: 'Assorted Macarons', price: 299, img: 'macarons.jpeg' }
+    ];
+
+    const grid = document.getElementById('productGrid');
+    const cartToggle = document.getElementById('cartToggle');
+    const cartDrawer = document.getElementById('cartDrawer');
+    const cartList = document.getElementById('cartList');
+    const cartTotal = document.getElementById('cartTotal');
+    const modalBg = document.getElementById('modalBg');
+
+    let cart = {};
+
+    function renderProducts() {
+      grid.innerHTML = '';
+      products.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+        <img src="${p.img}" alt="${p.name}">
+        <div class="card-body">
+          <h4 style="margin:0 0 8px">${p.name}</h4>
+          <div class="price-row">
+            <div class="price">₹${p.price}</div>
+            <button class="add" onclick="addToCart(${p.id})">Add</button>
+          </div>
+        </div>
+      `;
+        grid.appendChild(div);
+      });
+    }
+
+    function addToCart(id) {
+      const prod = products.find(x => x.id === id);
+      if (!cart[id]) cart[id] = { ...prod, qty: 0 };
+      cart[id].qty++;
+      updateCartUI();
+      openCart();
+    }
+
+    function updateCartUI() {
+      const items = Object.values(cart);
+      cartToggle.textContent = `Cart (${items.reduce((s, i) => s + i.qty, 0)})`;
+      cartList.innerHTML = '';
+      if (items.length === 0) {
+        cartList.innerHTML = '<div style="color:var(--muted)">No items yet — add something yummy!</div>';
+        cartTotal.textContent = '₹0';
+        return;
+      }
+      let total = 0;
+      items.forEach(it => {
+        total += it.price * it.qty;
+        const el = document.createElement('div');
+        el.className = 'cart-item';
+        el.innerHTML = `
+        <img src="${it.img}" alt="${it.name}">
+        <div style="flex:1">
+          <div style="font-weight:700">${it.name}</div>
+          <div style="color:var(--muted);font-size:13px">₹${it.price} x ${it.qty}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+          <div class="qty">
+            <button class="small-btn" onclick="changeQty(${it.id}, -1)">-</button>
+            <div style="padding:6px 8px;border-radius:6px;border:1px solid #eee">${it.qty}</div>
+            <button class="small-btn" onclick="changeQty(${it.id}, 1)">+</button>
+          </div>
+          <div style="font-weight:700">₹${it.price * it.qty}</div>
+        </div>
+      `;
+        cartList.appendChild(el);
+      });
+      cartTotal.textContent = `₹${total}`;
+    }
+
+    function changeQty(id, delta) {
+      if (!cart[id]) return;
+      cart[id].qty += delta;
+      if (cart[id].qty <= 0) delete cart[id];
+      updateCartUI();
+    }
+
+    function openCart() { cartDrawer.classList.add('open'); cartDrawer.setAttribute('aria-hidden', 'false') }
+    function closeCart() { cartDrawer.classList.remove('open'); cartDrawer.setAttribute('aria-hidden', 'true') }
+
+    cartToggle.addEventListener('click', () => {
+      if (cartDrawer.classList.contains('open')) closeCart(); else openCart();
+    });
+
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+
+      if (Object.keys(cart).length === 0) { alert('Please add some items to checkout.'); return; }
+      modalBg.style.display = 'flex';
+    });
+
+    document.getElementById('placeOrder').addEventListener('click', () => {
+      const name = document.getElementById('custName').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      if (!name || !phone) { alert('Please enter name and phone.'); return; }
+
+      modalBg.style.display = 'none';
+      cart = {};
+      updateCartUI();
+      closeCart();
+      alert('Order placed! (Demo) — Owner will contact you.');
+    });
+
+    function closeModal() { modalBg.style.display = 'none'; }
+
+    function openWhatsApp() {
+
+      const text = encodeURIComponent('Hello! I want to place an order from Val Bakes.');
+      window.open(`https://wa.me/9198765XXXXX?text=${text}`, '_blank');
+    }
+
+
+    renderProducts();
+    updateCartUI();
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+
+</html>
